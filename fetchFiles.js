@@ -1,9 +1,4 @@
-//ToDo
-//1. make a button that will cause program to run
-//2. make search run only within a certain directory 
-function onOpen(e) {
-  fetchFiles();
-}
+
 
 function fetchFiles() {
   // ------------------------ easy access --------------
@@ -88,5 +83,4 @@ function fetchFiles() {
   // } else {
   //   Logger.log("nothing found")
   // }
-
 
