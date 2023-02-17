@@ -1,3 +1,6 @@
+//ToDo
+//1. make a button that will cause program to run
+//2. make search run only within a certain directory 
 
 
 function fetchFiles() {
@@ -34,7 +37,14 @@ function fetchFiles() {
       return;
     }
 
-    const matchingFiles = DriveApp.getFilesByName(fileName);
+    let matchingFiles = DriveApp.getFilesByName(fileName);
+    if(!matchingFiles.hasNext()){
+      // if initial fileName search returned nothing, try alternative fileName
+      const alterntiveFileName = fileName.slice(0,-4) + "_DIRECT.pdf";
+      matchingFiles = DriveApp.getFilesByName(alterntiveFileName);
+    }
+
+
     const searchResultsArray = [];
     while (matchingFiles.hasNext()) {
       const file = matchingFiles.next();
@@ -83,4 +93,5 @@ function fetchFiles() {
   // } else {
   //   Logger.log("nothing found")
   // }
+
 
