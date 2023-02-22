@@ -1,6 +1,6 @@
 //ToDo
-//1. make a button that will cause program to run
-//2. make search run only within a certain directory 
+//1. 
+//2. 
 
 
 function fetchFiles() {
@@ -15,6 +15,15 @@ function fetchFiles() {
   // ----------=--------------------------- complex code -----------
   const activeSheet = SpreadsheetApp.getActive();
   const activeTab = SpreadsheetApp.getActiveSheet();
+  const currentClientInvoicesFolder = DriveApp.getFolderById("181qKnkhVne7LOWyugeTT8oqu1PuGy1zV");
+  //
+  //
+  //this deletes all previousClientInvoices 
+  const previousClientInvoices = currentClientInvoicesFolder.getFiles();
+  while(previousClientInvoices.hasNext()){
+    previousClientInvoices.next().setTrashed(true);
+  }
+  //the loop below is where the actual spreadsheet search iterations begin
 
   for (let i = firstRow; i <= maxRows; i++) {
     const currentRow = i;
@@ -59,6 +68,10 @@ function fetchFiles() {
         .build();
       //set search result
       activeTab.getRange(row, searchResultsCol).setRichTextValue(richValue);
+      //
+      //make a copy of the pdf and add to currentClientInvoicesFolder
+      //
+      searchResult.makeCopy("copy of " + searchResult.getName() , currentClientInvoicesFolder);
     } else {
       let errorText = "No Matching Files!";;
       if (searchResultsArray.length > 1) {
@@ -74,24 +87,5 @@ function fetchFiles() {
 
 
 
-  // //Begin Implimentation of Strict Search within a chosen parent folder
-  
-  // //issue: can only search within DIRECT children of parent folder (and not children of children);
-  
-  // // simple, quick and cheap solutions
-  //    // a. create a parent folder which has a copy of all invoices as DIRECT CHILDREN of the PARENT directory 
-  //    // b. create a new google drive account that is specifically used for invoice pdf's (this will speed up searching in ENTIRE DRIVE)
-
-  // // alterntive expensive and not necessarily quicker i can try to build and implement a custom solution but i would advice against it
-
-
-  // const searchDirectoryIterator = DriveApp.getFoldersByName("Test Files Directory");
-  // const searchDirectory = searchDirectoryIterator.next();
-  // const filesIterator = searchDirectory.getFilesByName();
-  // if(filesIterator.hasNext()){
-  //   Logger.log(filesIterator.next())
-  // } else {
-  //   Logger.log("nothing found")
-  // }
 
 
