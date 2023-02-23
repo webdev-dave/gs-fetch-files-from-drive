@@ -1,27 +1,36 @@
-//ToDo
-//1. 
-//2. 
+
+//NOTES for users
+// 1. Folder (currently named 000 Email Signed PDFs) where a copy of all currentSearchResultsPDFs are copied to can be moved to anywere or name renamed to anything without disturbing the code implimentation
+
+// ------------------------ code for users --------------
+//column range
+const fileNamesCol = 13;
+const searchResultsCol = 12;
+//row range
+const firstRow = 6;
+const maxRows = firstRow + 50;
+
+
+
+// ----------=--------------------------- complex code (for developers) -----------
+
+
+const activeSheet = SpreadsheetApp.getActive();
+const activeTab = SpreadsheetApp.getActiveSheet();
+const emailFolderId = "181qKnkhVne7LOWyugeTT8oqu1PuGy1zV"
+const currentClientInvoicesFolder = DriveApp.getFolderById(emailFolderId);
+const customTrashId = "1NUA3UXIU9b4msXK5_7GMd7Xg0_WRLHqS"
+const customTrashFolder = DriveApp.getFolderById(customTrashId);
 
 
 function fetchFiles() {
-  // ------------------------ easy access --------------
-  //column range
-  const fileNamesCol = 13;
-  const searchResultsCol = 12;
-  //row range
-  const firstRow = 6;
-  const maxRows = firstRow + 50;
 
-  // ----------=--------------------------- complex code -----------
-  const activeSheet = SpreadsheetApp.getActive();
-  const activeTab = SpreadsheetApp.getActiveSheet();
-  const currentClientInvoicesFolder = DriveApp.getFolderById("181qKnkhVne7LOWyugeTT8oqu1PuGy1zV");
-  //
-  //
   //this deletes all previousClientInvoices 
   const previousClientInvoices = currentClientInvoicesFolder.getFiles();
-  while(previousClientInvoices.hasNext()){
-    previousClientInvoices.next().setTrashed(true);
+  while (previousClientInvoices.hasNext()) {
+    const currentFile = previousClientInvoices.next();
+    //currentClientInvoicesFolder.removeFile(currentFile);
+    currentFile.moveTo(customTrashFolder);
   }
   //the loop below is where the actual spreadsheet search iterations begin
 
@@ -35,7 +44,7 @@ function fetchFiles() {
     }
   }
 
-
+//
   // ----------------------------------------------------- search helper function ----------------------
 
   function search(fileName, row) {
@@ -47,9 +56,9 @@ function fetchFiles() {
     }
 
     let matchingFiles = DriveApp.getFilesByName(fileName);
-    if(!matchingFiles.hasNext()){
+    if (!matchingFiles.hasNext()) {
       // if initial fileName search returned nothing, try alternative fileName
-      const alterntiveFileName = fileName.slice(0,-4) + "_DIRECT.pdf";
+      const alterntiveFileName = fileName.slice(0, -4) + "_DIRECT.pdf";
       matchingFiles = DriveApp.getFilesByName(alterntiveFileName);
     }
 
@@ -71,7 +80,7 @@ function fetchFiles() {
       //
       //make a copy of the pdf and add to currentClientInvoicesFolder
       //
-      searchResult.makeCopy("copy of " + searchResult.getName() , currentClientInvoicesFolder);
+      searchResult.makeCopy(searchResult.getName() + "_", currentClientInvoicesFolder);
     } else {
       let errorText = "No Matching Files!";;
       if (searchResultsArray.length > 1) {
@@ -84,8 +93,11 @@ function fetchFiles() {
   }
 }
 
-
-
-
-
-
+function emptyCustomTrashBin() {
+  const trashFiles = customTrashFolder.getFiles();
+  while(trashFiles.hasNext()){
+    const file = trashFiles.next();
+    customTrashFolder.removeFile(file);
+    //file.setTrashed(true);
+  }
+}
