@@ -1,26 +1,31 @@
-
 //NOTES for users
-// 1. Folder (currently named 000 Email Signed PDFs) where a copy of all currentSearchResultsPDFs are copied to can be moved to anywere or name renamed to anything without disturbing the code implimentation
+// 1. fetchFiles finds the file(s) we want to email and stores a copy in Folder "000 Email Signed PDFs"
+//    The copied file(s) has a "_" appended to it.
+//    The variable name for this folder is :  const emailFolderId = "1AKzlniDXyDQlV2RnhuaSdhzUc3HbireO"
+// 2. Search currently runs on all files in the (parent) folder named "LEAD Remedial". 
+//    The variable name for the above folder in the code below is: const emailFolderId = "1AKzlniDXyDQlV2RnhuaSdhzUc3HbireO"
 
 // ------------------------ code for users --------------
 //column range
-const fileNamesCol = 13;
-const searchResultsCol = 12;
+const fileNamesCol = 14;
+const searchResultsCol = 13;
 //row range
 const firstRow = 6;
 const maxRows = firstRow + 50;
 
 
 
-// ----------=--------------------------- complex code (for developers) -----------
+// -------------------------------------- complex code (for developers) -----------
 
 
 const activeSheet = SpreadsheetApp.getActive();
 const activeTab = SpreadsheetApp.getActiveSheet();
-const emailFolderId = "181qKnkhVne7LOWyugeTT8oqu1PuGy1zV"
-const currentClientInvoicesFolder = DriveApp.getFolderById(emailFolderId);
-const customTrashId = "1NUA3UXIU9b4msXK5_7GMd7Xg0_WRLHqS"
-const customTrashFolder = DriveApp.getFolderById(customTrashId);
+const testEmailFolderId = "181qKnkhVne7LOWyugeTT8oqu1PuGy1zV";
+//const emailFolderId = "1AKzlniDXyDQlV2RnhuaSdhzUc3HbireO";
+const currentClientInvoicesFolder = DriveApp.getFolderById(testEmailFolderId);
+const testCustomTrashId = "1NUA3UXIU9b4msXK5_7GMd7Xg0_WRLHqS"
+//const customTrashId = "10IE1J-NV7q9eyTakYHCFTnb2LHSftWsP";
+const customTrashFolder = DriveApp.getFolderById(testCustomTrashId);
 
 
 function fetchFiles() {
@@ -29,7 +34,6 @@ function fetchFiles() {
   const previousClientInvoices = currentClientInvoicesFolder.getFiles();
   while (previousClientInvoices.hasNext()) {
     const currentFile = previousClientInvoices.next();
-    //currentClientInvoicesFolder.removeFile(currentFile);
     currentFile.moveTo(customTrashFolder);
   }
   //the loop below is where the actual spreadsheet search iterations begin
@@ -56,6 +60,7 @@ function fetchFiles() {
     }
 
     let matchingFiles = DriveApp.getFilesByName(fileName);
+    
     if (!matchingFiles.hasNext()) {
       // if initial fileName search returned nothing, try alternative fileName
       const alterntiveFileName = fileName.slice(0, -4) + "_DIRECT.pdf";
@@ -93,11 +98,44 @@ function fetchFiles() {
   }
 }
 
-function emptyCustomTrashBin() {
+
+
+function mendelEmptyCustomTrash() {
   const trashFiles = customTrashFolder.getFiles();
   while(trashFiles.hasNext()){
     const file = trashFiles.next();
-    customTrashFolder.removeFile(file);
-    //file.setTrashed(true);
+    const ownerName = file.getOwner().getName();
+    if(ownerName === "Mendel Lichtenstein"){
+      file.setTrashed(true);
+    }
   }
 }
+
+function simonEmptyCustomTrash() {
+  const trashFiles = customTrashFolder.getFiles();
+  while(trashFiles.hasNext()){
+    const file = trashFiles.next();
+    const ownerName = file.getOwner().getName();
+    if(ownerName === "Simon Licht"){
+      file.setTrashed(true);
+    }
+  }
+}
+
+
+
+
+
+// --------------------------------------------- for testing purposes only!! --------------------------------------------------------------
+
+function davidEmptyCustomTrash() {
+  const trashFiles = customTrashFolder.getFiles();
+  while(trashFiles.hasNext()){
+    const file = trashFiles.next();
+    const ownerName = file.getOwner().getName();
+    if(ownerName === "David Richard"){
+      file.setTrashed(true);
+    }
+  }
+}
+
