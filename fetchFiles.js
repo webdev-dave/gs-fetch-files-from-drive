@@ -100,6 +100,9 @@ function fetchFiles() {
 
 
 
+
+// There are custom autoDeletionFunctions for each user in order to bypass the issue of scripts not allowing one user to delete the file of another user.
+
 function mendelEmptyCustomTrash() {
   const trashFiles = customTrashFolder.getFiles();
   while(trashFiles.hasNext()){
